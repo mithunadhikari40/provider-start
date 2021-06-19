@@ -1,13 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:todo/src/blocs/auth_bloc.dart';
-import 'package:todo/src/blocs/auth_bloc_provider.dart';
-import 'package:todo/src/screens/signup_screen.dart';
-import 'package:todo/src/screens/todo_screen.dart';
-import 'package:todo/src/widgets/custom_app_bar.dart';
-import 'package:todo/src/widgets/input_email.dart';
-import 'package:todo/src/widgets/input_password.dart';
-import 'package:todo/src/widgets/shared/app_colors.dart';
+import 'package:places/src/api/auth_api.dart';
+import 'package:places/src/model/user_model.dart';
+import 'package:places/src/screens/signup_screen.dart';
+import 'package:places/src/screens/dashboard_screen.dart';
+import 'package:places/src/widgets/custom_app_bar.dart';
+import 'package:places/src/widgets/input_email.dart';
+import 'package:places/src/widgets/input_password.dart';
+import 'package:places/src/widgets/shared/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -15,7 +17,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthBloc authBloc = AuthBlocProvider.of(context);
     return Scaffold(
       appBar: buildCustomAppBar(
         // leading: Icon(Icons.close),
@@ -37,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                   controller: _passwordController,
                 ),
                 _buildOption(context),
-                _buildSubmitButton(context, authBloc),
+                _buildSubmitButton(context),
                 SizedBox(height: 12),
                 _buildTermsAndConditions(context),
                 SizedBox(height: 12),
@@ -124,49 +125,38 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context, AuthBloc authBloc) {
-    return StreamBuilder(
-        stream: authBloc.loadingStatusStream,
-        initialData: false,
-        builder: (context, AsyncSnapshot<bool> loadingSnapshot) {
-          return StreamBuilder(
-              stream: authBloc.buttonStreamForLogin,
-              builder: (context, snapshot) {
-                return Container(
-                  margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-                  child: ButtonTheme(
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            side: BorderSide.none),
-                        padding: EdgeInsets.all(18.0),
-                        primary: primaryColor,
-                      ),
-                      onPressed: snapshot.hasData && (!loadingSnapshot.data!)
-                          ? () {
-                              _onSubmit(authBloc, context);
-                            }
-                          : null,
-                      child: loadingSnapshot.data!
-                          ? CircularProgressIndicator()
-                          : Text("Submit"),
-                    ),
-                  ),
-                );
-              });
-        });
+  Widget _buildSubmitButton(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+      child: ButtonTheme(
+        minWidth: MediaQuery.of(context).size.width,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: BorderSide.none),
+            padding: EdgeInsets.all(18.0),
+            primary: primaryColor,
+          ),
+          onPressed: () {
+            _onSubmit(context);
+          },
+          child: Text("Submit"),
+        ),
+      ),
+    );
   }
 
-  Future _onSubmit(AuthBloc authBloc, BuildContext context) async {
-    authBloc.changeLoadingStatus(true);
+  Future _onSubmit(BuildContext context) async {
+    final api = AuthApi();
 
     try {
-      final response = await authBloc.login();
-      authBloc.changeLoadingStatus(false);
+      await Future.delayed(Duration(seconds: 1));
+      // var response =
+      //     await api.login(_emailController.text, _passwordController.text);
+      //delete this override sometime later
+      var response = Random().nextBool() ? UserModel() : null;
       if (response == null) {
-        //todo show a snackbar message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Login failed")),
         );

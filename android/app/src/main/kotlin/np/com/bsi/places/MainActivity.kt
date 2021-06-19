@@ -1,4 +1,4 @@
-package np.com.bsi.todo.todo
+package np.com.bsi.places
 
 import io.flutter.embedding.android.FlutterActivity
 

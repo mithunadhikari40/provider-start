@@ -1,63 +1,67 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:todo/src/blocs/auth_bloc.dart';
-import 'package:todo/src/blocs/auth_bloc_provider.dart';
-import 'package:todo/src/screens/todo_screen.dart';
-import 'package:todo/src/utils/snackbar_helper.dart';
-import 'package:todo/src/widgets/custom_app_bar.dart';
-import 'package:todo/src/widgets/input_email.dart';
-import 'package:todo/src/widgets/input_name.dart';
-import 'package:todo/src/widgets/input_password.dart';
-import 'package:todo/src/widgets/input_phone.dart';
-import 'package:todo/src/widgets/shared/app_colors.dart';
+import 'package:places/src/api/auth_api.dart';
+import 'package:places/src/model/user_model.dart';
+import 'package:places/src/screens/dashboard_screen.dart';
+import 'package:places/src/utils/snackbar_helper.dart';
+import 'package:places/src/widgets/custom_app_bar.dart';
+import 'package:places/src/widgets/input_email.dart';
+import 'package:places/src/widgets/input_name.dart';
+import 'package:places/src/widgets/input_password.dart';
+import 'package:places/src/widgets/input_phone.dart';
+import 'package:places/src/widgets/shared/app_colors.dart';
 
 class SignUpScreen extends StatelessWidget {
   final TextEditingController _emailController =
       TextEditingController(text: "gmail@email.com");
   final TextEditingController _passwordController =
       TextEditingController(text: "password");
+  final TextEditingController _nameController =
+      TextEditingController(text: "Ram Kumar Shrestha");
+  final TextEditingController _phoneController =
+      TextEditingController(text: "9857983433");
 
   @override
-  Widget build(BuildContext ctx) {
-    return AuthBlocProvider(
-      child: Builder(builder: (context) {
-        final AuthBloc authBloc = AuthBlocProvider.of(context);
-
-        return Scaffold(
-          appBar: buildCustomAppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.close,
-                color: blackColor87,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            context: context,
-            subTitle: "Create your \n account",
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: buildCustomAppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.close,
+            color: blackColor87,
           ),
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(height: 24),
-                    InputName(),
-                    InputPhone(),
-                    InputEmail(controller: _emailController),
-                    InputPassword(controller: _passwordController),
-                    _buildSubmitButton(context, authBloc),
-                    SizedBox(height: 12),
-                    _buildTermsAndConditions(context),
-                    SizedBox(height: 12),
-                  ],
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        context: context,
+        subTitle: "Create your \n account",
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                SizedBox(height: 24),
+                InputName(
+                  controller: _nameController,
                 ),
-              ),
-              _buildSignInSection(context)
-            ],
+                InputPhone(
+                  controller: _phoneController,
+                ),
+                InputEmail(controller: _emailController),
+                InputPassword(controller: _passwordController),
+                _buildSubmitButton(context),
+                SizedBox(height: 12),
+                _buildTermsAndConditions(context),
+                SizedBox(height: 12),
+              ],
+            ),
           ),
-        );
-      }),
+          _buildSignInSection(context)
+        ],
+      ),
     );
   }
 
@@ -110,46 +114,37 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context, AuthBloc authBloc) {
-    return StreamBuilder(
-        stream: authBloc.loadingStatusStream,
-        initialData: false,
-        builder: (context, AsyncSnapshot<bool> loadingSnapshot) {
-          return StreamBuilder(
-              stream: authBloc.buttonStreamForLogin,
-              builder: (context, snapshot) {
-                return Container(
-                  margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-                  child: ButtonTheme(
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            side: BorderSide.none),
-                        padding: EdgeInsets.all(18.0),
-                        primary: primaryColor,
-                      ),
-                      onPressed: snapshot.hasData && (!loadingSnapshot.data!)
-                          ? () {
-                              _onSubmit(authBloc, context);
-                            }
-                          : null,
-                      child: loadingSnapshot.data!
-                          ? CircularProgressIndicator()
-                          : Text("Submit"),
-                    ),
-                  ),
-                );
-              });
-        });
+  Widget _buildSubmitButton(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+      child: ButtonTheme(
+        minWidth: MediaQuery.of(context).size.width,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: BorderSide.none),
+            padding: EdgeInsets.all(18.0),
+            primary: primaryColor,
+          ),
+          onPressed: () {
+            _onSubmit(context);
+          },
+          child: Text("Submit"),
+        ),
+      ),
+    );
   }
 
-  Future _onSubmit(AuthBloc authBloc, BuildContext context) async {
-    authBloc.changeLoadingStatus(true);
+  Future _onSubmit(BuildContext context) async {
+    final api = AuthApi();
     try {
-      final response = await authBloc.register();
-      authBloc.changeLoadingStatus(false);
+      // final response = await api.register(
+      //     _nameController.text,
+      //     _phoneController.text,
+      //     _emailController.text,
+      //     _passwordController.text);
+      var response = Random().nextBool() ? UserModel() : null;
       if (response == null) {
         //todo show a snackbar message
         showSnackBar(context, "Signup failed, please try again");

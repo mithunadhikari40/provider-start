@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/src/widgets/shared/app_colors.dart';
+import 'package:places/src/widgets/shared/app_colors.dart';
 
 AppBar buildCustomAppBar(
     {Widget leading = const Icon(Icons.close),
