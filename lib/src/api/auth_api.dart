@@ -1,17 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:places/src/core/constants/app_url.dart';
 import 'package:places/src/model/user_model.dart';
 
 class AuthApi {
-  Future<UserModel?> login(String email, String password) async {
-    Map<String, dynamic> requestBody = {
-      "email": email,
-      "password": password,
-      "gender": "none"
-    };
+  Future<String> login(String email, String password) async {
+    Map<String, dynamic> requestBody = {"email": email, "password": password};
     try {
-      var uri = Uri.parse("https://api.fresco-meat.com/api/albums/signup");
+      var uri = Uri.parse(AppUrl.LOGIN_URL);
       final response = await post(
         uri,
         body: jsonEncode(requestBody),
@@ -19,13 +16,15 @@ class AuthApi {
       );
       final body = response.body;
       print("login response $body");
-      if (response.statusCode != 201) return null;
-      final parsedMap = jsonDecode(body);
-      final user = UserModel.fromJson(parsedMap);
-      return user;
+      final parsed = jsonDecode(body);
+      if (parsed["token"] == null) {
+        throw Exception(
+            parsed["error"] ?? "Could not login with the credential provided");
+      }
+      return parsed["token"];
     } catch (e) {
       print("login exception $e");
-      return null;
+      throw Exception("$e");
     }
   }
 

@@ -150,7 +150,7 @@ class SignUpScreen extends StatelessWidget {
         showSnackBar(context, "Signup failed, please try again");
       } else {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return TodoScreen();
+          return DashboardScreen();
         }));
       }
     } catch (e) {
