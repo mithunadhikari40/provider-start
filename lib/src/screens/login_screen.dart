@@ -1,13 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:places/src/core/base_widget.dart';
-import 'package:places/src/screens/dashboard_screen.dart';
+import 'package:places/src/screens/dashboard/dashboard_screen.dart';
 import 'package:places/src/screens/signup_screen.dart';
+import 'package:places/src/services/auth/login_service.dart';
+import 'package:places/src/utils/snackbar_helper.dart';
 import 'package:places/src/viewmodels/login_view_model.dart';
 import 'package:places/src/widgets/custom_app_bar.dart';
 import 'package:places/src/widgets/input_email.dart';
 import 'package:places/src/widgets/input_password.dart';
 import 'package:places/src/widgets/shared/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -23,7 +26,9 @@ class LoginScreen extends StatelessWidget {
         subTitle: "Login to your \n account",
       ),
       body: BaseWidget<LoginViewModel>(
-        model: LoginViewModel(),
+        model: LoginViewModel(
+          loginService: Provider.of<LoginService>(context),
+        ),
         builder: (BuildContext context, LoginViewModel model, Widget? child) {
           return Column(
             children: <Widget>[
@@ -160,9 +165,7 @@ class LoginScreen extends StatelessWidget {
         return DashboardScreen();
       }));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("${model.errorMessage}")),
-      );
+      showSnackBar(context, model.errorMessage);
     }
   }
 

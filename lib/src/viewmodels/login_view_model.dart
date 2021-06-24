@@ -2,7 +2,10 @@ import 'package:places/src/core/base_view_model.dart';
 import 'package:places/src/services/auth/login_service.dart';
 
 class LoginViewModel extends BaseViewModel {
-  final loginService = LoginService();
+
+  final LoginService loginService;
+  LoginViewModel({required this.loginService});
+
   String get errorMessage => loginService.errorMessage;
 
   Future<bool> login(String email, String password) async {

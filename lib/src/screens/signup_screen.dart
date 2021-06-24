@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:places/src/api/auth_api.dart';
 import 'package:places/src/model/user_model.dart';
-import 'package:places/src/screens/dashboard_screen.dart';
+import 'package:places/src/screens/dashboard/dashboard_screen.dart';
 import 'package:places/src/utils/snackbar_helper.dart';
 import 'package:places/src/widgets/custom_app_bar.dart';
 import 'package:places/src/widgets/input_email.dart';

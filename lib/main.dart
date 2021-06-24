@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/src/core/providers.dart';
+import 'package:places/src/screens/dashboard/dashboard_screen.dart';
 import 'package:places/src/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,7 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: "Places",
         theme: ThemeData.light(),
-        home: LoginScreen(),
+        home: DashboardScreen(),
       ),
     );
   }

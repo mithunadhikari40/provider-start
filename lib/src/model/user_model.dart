@@ -3,50 +3,54 @@ class UserModel {
   String? sId;
   String? name;
   String? email;
-  String? password;
   int? phone;
-  String? city;
   String? registrationDate;
-  int? iV;
-  String? pushToken;
 
   UserModel(
       {this.isAdmin,
       this.sId,
       this.name,
       this.email,
-      this.password,
       this.phone,
-      this.city,
-      this.registrationDate,
-      this.iV,
-      this.pushToken});
+      this.registrationDate});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     isAdmin = json['isAdmin'];
     sId = json['_id'];
     name = json['name'];
     email = json['email'];
-    password = json['password'];
     phone = json['phone'];
-    city = json['city'];
     registrationDate = json['registrationDate'];
-    iV = json['__v'];
-    pushToken = json['pushToken'];
+  }
+
+  UserModel.fromDb(Map<String, dynamic> json) {
+    isAdmin = json['isAdmin'] == 1;
+    sId = json['id'];
+    name = json['name'];
+    email = json['email'];
+    phone = json['phone'];
+    registrationDate = json['registrationDate'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['isAdmin'] = this.isAdmin;
     data['_id'] = this.sId;
     data['name'] = this.name;
     data['email'] = this.email;
-    data['password'] = this.password;
     data['phone'] = this.phone;
-    data['city'] = this.city;
     data['registrationDate'] = this.registrationDate;
-    data['__v'] = this.iV;
-    data['pushToken'] = this.pushToken;
+    return data;
+  }
+
+  Map<String, dynamic> toDb() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['isAdmin'] = this.isAdmin == true ? 1 : 0;
+    data['id'] = this.sId;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['phone'] = this.phone;
+    data['registrationDate'] = this.registrationDate;
     return data;
   }
 }
