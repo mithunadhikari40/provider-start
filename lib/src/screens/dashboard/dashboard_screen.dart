@@ -10,19 +10,22 @@ import 'package:provider/provider.dart';
 
 class DashboardScreen extends StatelessWidget {
   static const screens = [ExploreScreen(), FavoriteScreen(), ProfileScreen()];
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return BaseWidget<DashboardViewModel>(
-        model: DashboardViewModel(service: Provider.of(context)),
+        model: DashboardViewModel(
+          service: Provider.of(context),
+        ),
         builder: (context, DashboardViewModel model, Widget? child) {
           return Scaffold(
             key: _scaffoldKey,
             appBar: _buildAppBar(model, context),
             body: _buildBody(model),
             bottomNavigationBar: _buildBottomNavigationBar(context, model),
-            drawer: _buildNavigationDrawer(model,context),
+            drawer: _buildNavigationDrawer(model, context),
           );
         });
   }
@@ -34,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: whiteColor,
       leading: IconButton(
         icon: Icon(
-          Icons.horizontal_split_outlined,
+          Icons.menu,
           color: blackColor87,
         ),
         onPressed: () {
@@ -86,7 +89,8 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationDrawer(DashboardViewModel model, BuildContext context) {
+  Widget _buildNavigationDrawer(
+      DashboardViewModel model, BuildContext context) {
     return Container(
       width: 200,
       color: whiteColor,

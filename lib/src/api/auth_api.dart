@@ -30,7 +30,7 @@ class AuthApi {
 
   Future<UserModel> fetchUserDetail(String token) async {
     try {
-      var uri = Uri.parse(AppUrl.LOGIN_URL);
+      var uri = Uri.parse(AppUrl.PROFILE_URL);
       final response = await get(
         uri,
         headers: {"Content-Type": "application/json",
@@ -52,7 +52,7 @@ class AuthApi {
     }
   }
 
-  Future<UserModel?> register(
+  Future<String> register(
       String name, String phone, String email, String password) async {
     Map<String, dynamic> requestBody = {
       "email": email,
@@ -61,7 +61,7 @@ class AuthApi {
       "phone": phone,
     };
     try {
-      var uri = Uri.parse("https://api.fresco-meat.com/api/albums/signup");
+      var uri = Uri.parse(AppUrl.REGISTER_URL);
       final response = await post(
         uri,
         body: jsonEncode(requestBody),
@@ -69,13 +69,15 @@ class AuthApi {
       );
       final body = response.body;
       print("Signup response $body");
-      if (response.statusCode != 201) return null;
-      final parsedMap = jsonDecode(body);
-      final user = UserModel.fromJson(parsedMap);
-      return user;
+      final parsed = jsonDecode(body);
+      if (parsed["token"] == null) {
+        throw Exception(
+            parsed["error"] ?? "Could not login with the credential provided");
+      }
+      return parsed["token"];
     } catch (e) {
       print("Sigup exception $e");
-      return null;
+      throw Exception("$e");
     }
   }
 }

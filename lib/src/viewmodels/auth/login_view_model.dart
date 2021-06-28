@@ -1,9 +1,9 @@
 import 'package:places/src/core/base_view_model.dart';
-import 'package:places/src/services/auth/login_service.dart';
+import 'package:places/src/services/auth/auth_service.dart';
 
 class LoginViewModel extends BaseViewModel {
 
-  final LoginService loginService;
+  final AuthService loginService;
   LoginViewModel({required this.loginService});
 
   String get errorMessage => loginService.errorMessage;

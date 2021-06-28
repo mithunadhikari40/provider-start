@@ -25,7 +25,7 @@ class DbProvider {
               isAdmin INTEGER,
               name TEXT,
               email TEXT,
-              phone TEXT,
+              phone INTEGER,
               registrationDate TEXT
             )
         """);

@@ -2,10 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:places/src/core/base_widget.dart';
 import 'package:places/src/screens/dashboard/dashboard_screen.dart';
-import 'package:places/src/screens/signup_screen.dart';
-import 'package:places/src/services/auth/login_service.dart';
+import 'package:places/src/screens/auth/signup_screen.dart';
+import 'package:places/src/services/auth/auth_service.dart';
 import 'package:places/src/utils/snackbar_helper.dart';
-import 'package:places/src/viewmodels/login_view_model.dart';
+import 'package:places/src/viewmodels/auth/login_view_model.dart';
 import 'package:places/src/widgets/custom_app_bar.dart';
 import 'package:places/src/widgets/input_email.dart';
 import 'package:places/src/widgets/input_password.dart';
@@ -27,9 +27,10 @@ class LoginScreen extends StatelessWidget {
       ),
       body: BaseWidget<LoginViewModel>(
         model: LoginViewModel(
-          loginService: Provider.of<LoginService>(context),
+          loginService: Provider.of<AuthService>(context),
         ),
         builder: (BuildContext context, LoginViewModel model, Widget? child) {
+
           return Column(
             children: <Widget>[
               Expanded(
