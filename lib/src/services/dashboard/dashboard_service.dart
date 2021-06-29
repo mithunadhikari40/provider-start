@@ -1,9 +1,12 @@
-import 'package:places/src/api/auth_api.dart';
+import 'package:location/location.dart';
+import 'package:places/src/services/auth_rx_provider.dart';
 
-class DashboardService{
-  //todo to be removed
-  final AuthApi api;
+class DashboardService {
+  final AuthRxProvider authRxProvider;
 
-  DashboardService({required this.api});
+  DashboardService({required this.authRxProvider});
 
+  void setLocation(LocationData locationData) {
+    authRxProvider.addLocation(locationData);
+  }
 }

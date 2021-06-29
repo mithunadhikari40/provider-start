@@ -51,9 +51,9 @@ final List<SingleChildWidget> dependantProviders = [
           dbProvider: dbProvider);
     },
   ),
-  ProxyProvider<AuthApi, DashboardService>(
-    update: (BuildContext context, AuthApi api, DashboardService? service) {
-      return DashboardService(api: api);
+  ProxyProvider<AuthRxProvider, DashboardService>(
+    update: (BuildContext context, AuthRxProvider authRxProvider, DashboardService? service) {
+      return DashboardService(authRxProvider: authRxProvider);
     },
   ),
   ProxyProvider2<ExploreApi, AuthRxProvider, ExploreService>(

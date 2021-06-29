@@ -13,16 +13,16 @@ class PlaceModel {
 
   PlaceModel(
       {this.sId,
-        this.name,
-        this.city,
-        this.street,
-        this.address,
-        this.image,
-        this.description,
-        this.monument,
-        this.latitude,
-        this.longitude,
-        this.user});
+      this.name,
+      this.city,
+      this.street,
+      this.address,
+      this.image,
+      this.description,
+      this.monument,
+      this.latitude,
+      this.longitude,
+      this.user});
 
   PlaceModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -54,10 +54,13 @@ class PlaceModel {
     return data;
   }
 
-  static List<PlaceModel> allResponse(data){
-    return data.cast<Map<String,dynamic>>()
+  static List<PlaceModel> allResponse(data) {
+    return data
+        .cast<Map<String, dynamic>>()
         .map((e) => PlaceModel.fromJson(e))
         .toList()
         .cast<PlaceModel>();
   }
 }
+
+

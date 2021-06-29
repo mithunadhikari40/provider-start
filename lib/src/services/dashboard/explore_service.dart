@@ -1,5 +1,6 @@
+import 'package:location/location.dart';
 import 'package:places/src/api/dashboard/explore_api.dart';
-import 'package:places/src/model/dashboard/place_model.dart';
+import 'package:places/src/model/network_response_model.dart';
 import 'package:places/src/services/auth_rx_provider.dart';
 
 class ExploreService {
@@ -8,19 +9,18 @@ class ExploreService {
 
   ExploreService({required this.api, required this.authRxProvider});
 
-  List<PlaceModel> _places = [];
+  NetworkResponseModel? _places;
 
-  List<PlaceModel> get places => _places;
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
+  NetworkResponseModel get places => _places!;
+
+  LocationData? get currentLocation => authRxProvider.getLocation;
 
   Future<void> getAllPlaces() async {
-    try {
-      final response = await api.getAllPlaces();
-      _places = response;
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = "$e".replaceAll("Exception:", "");
+    final response = await api.getAllPlaces();
+    if(response.status){
+      //to something
+      String value  = response.data;
     }
+    _places = response;
   }
 }

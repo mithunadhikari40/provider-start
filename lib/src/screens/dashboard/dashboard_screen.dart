@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:places/src/core/base_widget.dart';
 import 'package:places/src/screens/dashboard/explore_screen.dart';
 import 'package:places/src/screens/dashboard/favorite_screen.dart';
 import 'package:places/src/screens/dashboard/profile_screen.dart';
+import 'package:places/src/utils/snackbar_helper.dart';
 import 'package:places/src/viewmodels/dashboard/dashboard_view_model.dart';
 import 'package:places/src/widgets/shared/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +18,8 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseWidget<DashboardViewModel>(
-        model: DashboardViewModel(
-          service: Provider.of(context),
-        ),
+        model: DashboardViewModel(service: Provider.of(context)),
+        onModelReady: (model) => _onModelReady(model,context),
         builder: (context, DashboardViewModel model, Widget? child) {
           return Scaffold(
             key: _scaffoldKey,
@@ -140,5 +141,38 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+ Future<void> _onModelReady(DashboardViewModel model, BuildContext context) async {
+   Location location =  Location();
+
+   bool? _serviceEnabled;
+   PermissionStatus? _permissionGranted;
+   LocationData? _locationData;
+
+   _serviceEnabled = await location.serviceEnabled();
+   if (!_serviceEnabled) {
+     _serviceEnabled = await location.requestService();
+     if (!_serviceEnabled) {
+       showSnackBar(context,"Places needs to have your location turned on to work properly");
+
+       return;
+     }
+   }
+
+   _permissionGranted = await location.hasPermission();
+   if (_permissionGranted == PermissionStatus.denied) {
+     _permissionGranted = await location.requestPermission();
+     if (_permissionGranted != PermissionStatus.granted) {
+       showSnackBar(context,"Places needs to have your permission to access location to work properly");
+       return;
+     }
+   }
+
+   _locationData = await location.getLocation();
+   model.setLocation(_locationData);
+
+
+
   }
 }

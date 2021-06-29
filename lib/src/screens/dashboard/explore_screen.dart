@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:places/src/core/base_widget.dart';
 import 'package:places/src/model/dashboard/place_model.dart';
-import 'package:places/src/utils/image_helper.dart';
 import 'package:places/src/viewmodels/dashboard/explore_view_model.dart';
 import 'package:places/src/widgets/error_view.dart';
 import 'package:places/src/widgets/loading_indicator.dart';
+import 'package:places/src/widgets/place_item.dart';
 import 'package:provider/provider.dart';
 
 class ExploreScreen extends StatelessWidget {
@@ -28,36 +28,18 @@ class ExploreScreen extends StatelessWidget {
     if (model.busy) {
       return LoadingIndicator();
     }
-    if (model.errorMessage != null) {
+    if (model.places.status == false) {
       return ErrorView(
-          messages: model.errorMessage!,
+          messages: model.places.message!,
           callback: () async => await model.initialize());
     }
     return ListView.builder(
-      itemCount: model.places.length,
+      itemCount: model.places.data.length,
       padding: EdgeInsets.only(bottom: 12),
       itemBuilder: (BuildContext context, int index) {
-        return _buildPlaceItem(context, model.places[index]);
+        final PlaceModel place = model.places.data[index] as PlaceModel;
+        return PlaceItem(place: place,location:model.currentLocation);
       },
-    );
-  }
-
-  Widget _buildPlaceItem(BuildContext context, PlaceModel place) {
-    return Column(
-      children: [
-        ClipRRect(
-          child: Image.network(getImage(place.image!)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        SizedBox(height: 8),
-        Text("${place.name}", style: Theme.of(context).textTheme.headline6),
-        SizedBox(height: 8),
-        Text("Near: ${place.monument}"),
-        SizedBox(height: 8),
-        Text("${place.description}"),
-        SizedBox(height: 12),
-
-      ],
     );
   }
 }
