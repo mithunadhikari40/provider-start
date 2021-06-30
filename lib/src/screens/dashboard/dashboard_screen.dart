@@ -155,7 +155,6 @@ class DashboardScreen extends StatelessWidget {
      _serviceEnabled = await location.requestService();
      if (!_serviceEnabled) {
        showSnackBar(context,"Places needs to have your location turned on to work properly");
-
        return;
      }
    }

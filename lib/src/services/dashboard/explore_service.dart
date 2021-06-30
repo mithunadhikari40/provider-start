@@ -17,10 +17,10 @@ class ExploreService {
 
   Future<void> getAllPlaces() async {
     final response = await api.getAllPlaces();
-    if(response.status){
-      //to something
-      String value  = response.data;
-    }
+    // if(response.status){
+    //   //to something
+    //   String value  = response.data;
+    // }
     _places = response;
   }
 }

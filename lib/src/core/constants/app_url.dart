@@ -4,4 +4,5 @@ class AppUrl{
   static const PROFILE_URL = "$BASE_URL/users/me";
   static const REGISTER_URL = "$BASE_URL/auth/register";
   static const PLACES_LIST_URL = "$BASE_URL/places/all";
+  static const FAVORITE_LIST_URL = "$BASE_URL/favorite";
 }

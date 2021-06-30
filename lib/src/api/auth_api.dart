@@ -33,7 +33,8 @@ class AuthApi {
       var uri = Uri.parse(AppUrl.PROFILE_URL);
       final response = await get(
         uri,
-        headers: {"Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
         // "Authorization":"Bearer $token",
           "x-auth-token":token
         },

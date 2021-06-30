@@ -32,7 +32,12 @@ class PlaceItem extends StatelessWidget {
               location == null
                   ? Text("Some distance away")
                   : Text(
-                      "${LocationHelper.calculateDistanceInKm(latitude1: location!.latitude!, longitude1: location!.longitude!, latitude2: place.latitude!, longitude2: place.longitude!)} KM"),
+                      "${LocationHelper.calculateDistanceInKm(latitude1: location!.latitude!, longitude1: location!.longitude!, latitude2: place.latitude!, longitude2: place.longitude!).toStringAsFixed(1)} KM"),
+              SizedBox(height: 8),
+              location == null
+                  ? Text("Few moments away")
+                  : Text(
+                      "${LocationHelper.getApproximateTravelTime(latitude1: location!.latitude!, longitude1: location!.longitude!, latitude2: place.latitude!, longitude2: place.longitude!)}"),
               SizedBox(height: 8),
               Text("${place.description}"),
             ],
