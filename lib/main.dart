@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:places/src/core/providers.dart';
-import 'package:places/src/screens/dashboard/splash_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:places/src/screens/auth/login_screen.dart';
 
 Future<void> main() async {
   runApp(App());
@@ -10,13 +8,10 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: providers,
-      child: MaterialApp(
+    return  MaterialApp(
         title: "Places",
         theme: ThemeData.light(),
-        home: SplashScreen(),
-      ),
+        home: LoginScreen(),
     );
   }
 }

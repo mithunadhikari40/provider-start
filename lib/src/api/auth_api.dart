@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:places/src/core/constants/app_url.dart';
+import 'package:places/src/model/network_response_model.dart';
 import 'package:places/src/model/user_model.dart';
 
 class AuthApi {
-  Future<String> login(String email, String password) async {
+  Future<NetworkResponseModel> login(String email, String password) async {
     Map<String, dynamic> requestBody = {"email": email, "password": password};
     try {
       var uri = Uri.parse(AppUrl.LOGIN_URL);
@@ -18,42 +19,51 @@ class AuthApi {
       print("login response $body");
       final parsed = jsonDecode(body);
       if (parsed["token"] == null) {
-        throw Exception(
-            parsed["error"] ?? "Could not login with the credential provided");
+        return NetworkResponseModel(
+            status: false,
+            message: parsed["error"] ??
+                "Could not login with the credential provided");
       }
-      return parsed["token"];
+      return NetworkResponseModel(status: true, data: parsed["token"]);
     } catch (e) {
       print("login exception $e");
-      throw Exception("$e");
+
+      return NetworkResponseModel(
+          status: false, message: "$e".replaceAll("Exception:", ""));
     }
   }
 
-  Future<UserModel> fetchUserDetail(String token) async {
+  Future<NetworkResponseModel> fetchUserDetail(String token) async {
     try {
       var uri = Uri.parse(AppUrl.PROFILE_URL);
       final response = await get(
         uri,
         headers: {
           "Content-Type": "application/json",
-        // "Authorization":"Bearer $token",
-          "x-auth-token":token
+          // "Authorization":"Bearer $token",
+          "x-auth-token": token
         },
       );
       final body = response.body;
       print("me response $body");
       final parsed = jsonDecode(body);
       if (parsed["data"] == null) {
-        throw Exception(
-            parsed["error"] ?? "Could not get your profile detail");
+        return NetworkResponseModel(
+            status: false,
+            message: parsed["error"] ??
+                "Could not login with the credential provided");
       }
-      return UserModel.fromJson(parsed["data"]);
+
+      final user = UserModel.fromJson(parsed["data"]);
+      return NetworkResponseModel(status: true, data: user);
     } catch (e) {
       print("profile fetch exception $e");
-      throw Exception("$e");
+      return NetworkResponseModel(
+          status: false, message: "$e".replaceAll("Exception:", ""));
     }
   }
 
-  Future<String> register(
+  Future<NetworkResponseModel> register(
       String name, String phone, String email, String password) async {
     Map<String, dynamic> requestBody = {
       "email": email,
@@ -72,13 +82,16 @@ class AuthApi {
       print("Signup response $body");
       final parsed = jsonDecode(body);
       if (parsed["token"] == null) {
-        throw Exception(
-            parsed["error"] ?? "Could not login with the credential provided");
+        return NetworkResponseModel(
+            status: false,
+            message: parsed["error"] ??
+                "Could not login with the credential provided");
       }
-      return parsed["token"];
+      return NetworkResponseModel(status: true, data: parsed["token"]);
     } catch (e) {
       print("Sigup exception $e");
-      throw Exception("$e");
+      return NetworkResponseModel(
+          status: false, message: "$e".replaceAll("Exception:", ""));
     }
   }
 }

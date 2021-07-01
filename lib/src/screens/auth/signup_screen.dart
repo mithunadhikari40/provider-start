@@ -1,17 +1,15 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:places/src/core/base_widget.dart';
+import 'package:places/src/api/auth_api.dart';
 import 'package:places/src/screens/dashboard/dashboard_screen.dart';
 import 'package:places/src/utils/snackbar_helper.dart';
-import 'package:places/src/viewmodels/auth/signup_view_model.dart';
 import 'package:places/src/widgets/custom_app_bar.dart';
 import 'package:places/src/widgets/input_email.dart';
 import 'package:places/src/widgets/input_name.dart';
 import 'package:places/src/widgets/input_password.dart';
 import 'package:places/src/widgets/input_phone.dart';
 import 'package:places/src/widgets/shared/app_colors.dart';
-import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
   final TextEditingController _emailController =
@@ -37,10 +35,7 @@ class SignUpScreen extends StatelessWidget {
         context: context,
         subTitle: "Create your \n account",
       ),
-      body: BaseWidget<SignupViewModel>(
-          model: SignupViewModel(loginService: Provider.of(context)),
-          builder: (context, SignupViewModel model, child) {
-            return Column(
+      body:  Column(
               children: <Widget>[
                 Expanded(
                   child: ListView(
@@ -51,7 +46,7 @@ class SignUpScreen extends StatelessWidget {
                       InputPhone(controller: _phoneController),
                       InputEmail(controller: _emailController),
                       InputPassword(controller: _passwordController),
-                      _buildSubmitButton(context, model),
+                      _buildSubmitButton(context),
                       SizedBox(height: 12),
                       _buildTermsAndConditions(context),
                       SizedBox(height: 12),
@@ -60,8 +55,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 _buildSignInSection(context)
               ],
-            );
-          }),
+            ),
     );
   }
 
@@ -114,7 +108,7 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context, SignupViewModel model) {
+  Widget _buildSubmitButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
       child: ButtonTheme(
@@ -127,27 +121,27 @@ class SignUpScreen extends StatelessWidget {
             padding: EdgeInsets.all(18.0),
             primary: primaryColor,
           ),
-          onPressed: model.busy
-              ? null
-              : () {
-                  _onSubmit(context,model);
+          onPressed:  () {
+                  _onSubmit(context);
                 },
-          child: model.busy ? CircularProgressIndicator() : Text("Submit"),
+          child: Text("Submit"),
         ),
       ),
     );
   }
 
-  Future _onSubmit(BuildContext context,SignupViewModel model) async {
-    final success =
-    await model.signup(_nameController.text,_phoneController.text,
+  Future _onSubmit(BuildContext context) async {
+    final api = AuthApi();
+
+    final response =
+    await api.register(_nameController.text,_phoneController.text,
         _emailController.text, _passwordController.text);
-    if (success) {
+    if (response.status) {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
         return DashboardScreen();
       }));
     } else {
-      showSnackBar(context, model.errorMessage);
+      showSnackBar(context, response.message!);
     }
   }
 

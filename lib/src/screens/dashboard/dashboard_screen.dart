@@ -1,40 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
-import 'package:places/src/core/base_widget.dart';
 import 'package:places/src/screens/dashboard/explore_screen.dart';
 import 'package:places/src/screens/dashboard/favorite_screen.dart';
 import 'package:places/src/screens/dashboard/profile_screen.dart';
-import 'package:places/src/utils/snackbar_helper.dart';
-import 'package:places/src/viewmodels/dashboard/dashboard_view_model.dart';
 import 'package:places/src/widgets/shared/app_colors.dart';
-import 'package:provider/provider.dart';
 
-class DashboardScreen extends StatelessWidget {
-  static const screens = [ExploreScreen(), FavoriteScreen(), ProfileScreen()];
+class DashboardScreen extends StatefulWidget {
+  @override
+  _DashboardScreenState createState() => _DashboardScreenState();
+}
 
+class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  static const screens = [ExploreScreen(), FavoriteScreen(), ProfileScreen()];
+  static const titles = ["Explore", "Favorite", "Profile"];
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return BaseWidget<DashboardViewModel>(
-        model: DashboardViewModel(service: Provider.of(context)),
-        onModelReady: (model) => _onModelReady(model,context),
-        builder: (context, DashboardViewModel model, Widget? child) {
-          return Scaffold(
-            key: _scaffoldKey,
-            appBar: _buildAppBar(model, context),
-            body: _buildBody(model),
-            bottomNavigationBar: _buildBottomNavigationBar(context, model),
-            drawer: _buildNavigationDrawer(model, context),
-          );
-        });
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: _buildAppBar(context),
+      body: _buildBody(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
+      drawer: _buildNavigationDrawer(context),
+    );
   }
 
-  AppBar _buildAppBar(DashboardViewModel model, BuildContext context) {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title:
-          Text(model.getAppbarTitle(), style: TextStyle(color: blackColor87)),
+      title: Text(titles[_currentIndex], style: TextStyle(color: blackColor87)),
       backgroundColor: whiteColor,
       leading: IconButton(
         icon: Icon(
@@ -64,12 +59,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(DashboardViewModel model) {
-    return screens[model.currentIndex];
+  Widget _buildBody() {
+    return screens[_currentIndex];
   }
 
-  Widget _buildBottomNavigationBar(
-      BuildContext context, DashboardViewModel model) {
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Explore"),
@@ -77,8 +71,12 @@ class DashboardScreen extends StatelessWidget {
             icon: Icon(Icons.favorite_outlined), label: "Favorite"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       ],
-      onTap: model.changeTab,
-      currentIndex: model.currentIndex,
+      onTap: (int index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      currentIndex: _currentIndex,
       showSelectedLabels: true,
       showUnselectedLabels: true,
       selectedIconTheme: IconThemeData(color: blackColor87),
@@ -90,8 +88,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationDrawer(
-      DashboardViewModel model, BuildContext context) {
+  Widget _buildNavigationDrawer(BuildContext context) {
     return Container(
       width: 200,
       color: whiteColor,
@@ -105,27 +102,33 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               title: Text("Explore"),
               trailing: Icon(Icons.explore),
-              selected: model.currentIndex == 0,
+              selected: _currentIndex == 0,
               onTap: () {
-                model.changeTab(0);
+                setState(() {
+                  _currentIndex = 0;
+                });
                 Navigator.of(context).pop();
               },
             ),
             ListTile(
               title: Text("Favorite"),
               trailing: Icon(Icons.favorite_outlined),
-              selected: model.currentIndex == 1,
+              selected: _currentIndex == 1,
               onTap: () {
-                model.changeTab(1);
+                setState(() {
+                  _currentIndex = 1;
+                });
                 Navigator.of(context).pop();
               },
             ),
             ListTile(
               title: Text("Profile"),
               trailing: Icon(Icons.person),
-              selected: model.currentIndex == 2,
+              selected: _currentIndex == 2,
               onTap: () {
-                model.changeTab(2);
+                setState(() {
+                  _currentIndex = 2;
+                });
                 Navigator.of(context).pop();
               },
             ),
@@ -141,37 +144,5 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
- Future<void> _onModelReady(DashboardViewModel model, BuildContext context) async {
-   Location location =  Location();
-
-   bool? _serviceEnabled;
-   PermissionStatus? _permissionGranted;
-   LocationData? _locationData;
-
-   _serviceEnabled = await location.serviceEnabled();
-   if (!_serviceEnabled) {
-     _serviceEnabled = await location.requestService();
-     if (!_serviceEnabled) {
-       showSnackBar(context,"Places needs to have your location turned on to work properly");
-       return;
-     }
-   }
-
-   _permissionGranted = await location.hasPermission();
-   if (_permissionGranted == PermissionStatus.denied) {
-     _permissionGranted = await location.requestPermission();
-     if (_permissionGranted != PermissionStatus.granted) {
-       showSnackBar(context,"Places needs to have your permission to access location to work properly");
-       return;
-     }
-   }
-
-   _locationData = await location.getLocation();
-   model.setLocation(_locationData);
-
-
-
   }
 }

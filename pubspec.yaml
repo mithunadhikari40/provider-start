@@ -31,7 +31,6 @@ dependencies:
 
   http: ^0.13.3
 
-  location: ^4.3.0
 
   path_provider: ^2.0.2
   provider: ^5.0.0
