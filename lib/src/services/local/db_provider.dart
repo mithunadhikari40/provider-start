@@ -16,7 +16,7 @@ class DbProvider {
   Future<void> _init() async {
     Directory dir = await getApplicationDocumentsDirectory();
     final dbPath = path.join(dir.path, DB_NAME);
-    _db = await openDatabase(dbPath, version: 1,
+    _db = await openDatabase(dbPath, version: 2,
         onCreate: (Database newDb, int version) {
       Batch batch = newDb.batch();
       batch.execute("""
@@ -29,12 +29,37 @@ class DbProvider {
               registrationDate TEXT
             )
         """);
+      for (int i = 1; i < version; i++) {
+        for (var value in getMigrations()[i - 1]) {
+          batch.execute(value);
+        }
+      }
+
+      batch.commit();
+    }, onUpgrade: (Database newDb, int oldVersion, int newVersion) {
+      Batch batch = newDb.batch();
+      for (int i = oldVersion; i < newVersion; i++) {
+        for (var value in getMigrations()[i - 1]) {
+          batch.execute(value);
+        }
+      }
       batch.commit();
     });
   }
 
+  List<List<String>> getMigrations() {
+    return [
+      [
+        "ALTER TABLE $USER_TABLE  ADD coverPic TEXT",
+        "ALTER TABLE $USER_TABLE  ADD profilePic TEXT",
+        "ALTER TABLE $USER_TABLE  ADD pushToken TEXT",
+      ],
+    ];
+  }
+
   Future<int> insertUser(UserModel user) async {
     if (_db == null) await _init();
+    await _db!.delete(USER_TABLE);
     return _db!.insert(USER_TABLE, user.toDb());
   }
 

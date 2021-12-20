@@ -20,4 +20,19 @@ class CacheProvider {
     if (_preferences == null) await _init();
     _preferences!.setString(key, value);
   }
+
+  Future<bool?> getBoolValue(String key) async {
+    if (_preferences == null) await _init();
+    return _preferences!.getBool(key);
+  }
+
+  Future<void> setBoolValue(String key, bool value) async {
+    if (_preferences == null) await _init();
+    _preferences!.setBool(key, value);
+  }
+
+  Future<void> clear() async {
+    if (_preferences == null) await _init();
+    _preferences!.clear();
+  }
 }

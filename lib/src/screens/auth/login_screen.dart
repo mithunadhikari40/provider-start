@@ -1,53 +1,60 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:places/src/api/auth_api.dart';
-import 'package:places/src/screens/dashboard/dashboard_screen.dart';
-import 'package:places/src/screens/auth/signup_screen.dart';
+import 'package:places/src/core/base_widget.dart';
+import 'package:places/src/core/locator/service_locator.dart';
+import 'package:places/src/core/navigation/route_paths.dart';
 import 'package:places/src/utils/snackbar_helper.dart';
+import 'package:places/src/viewmodels/auth/login_view_model.dart';
 import 'package:places/src/widgets/custom_app_bar.dart';
 import 'package:places/src/widgets/input_email.dart';
 import 'package:places/src/widgets/input_password.dart';
 import 'package:places/src/widgets/shared/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController =
+      TextEditingController(text: "outlook@gmail.com");
+  final TextEditingController _passwordController =
+      TextEditingController(text: "Nepal@123");
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildCustomAppBar(
-        // leading: Icon(Icons.close),
-        leading: Container(),
-        context: context,
-        subTitle: "Login to your \n account",
+    return SafeArea(
+      child: Scaffold(
+        appBar: buildCustomAppBar(
+          // leading: Icon(Icons.close),
+          leading: Container(),
+          context: context,
+          subTitle: "Login to your \n account",
+        ),
+        body: BaseWidget<LoginViewModel>(
+            model: locator<LoginViewModel>(),
+            builder: (BuildContext context, LoginViewModel model, Widget? child) {
+              return Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        SizedBox(height: 24),
+                        InputEmail(
+                          controller: _emailController,
+                        ),
+                        InputPassword(
+                          controller: _passwordController,
+                        ),
+                        _buildOption(context),
+                        _buildSubmitButton(context, model),
+                        SizedBox(height: 12),
+                        _buildTermsAndConditions(context),
+                        SizedBox(height: 12),
+                      ],
+                    ),
+                  ),
+                  _buildSignUpSection(context)
+                ],
+              );
+            }),
       ),
-      body:
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(height: 24),
-                    InputEmail(
-                      controller: _emailController,
-                    ),
-                    InputPassword(
-                      controller: _passwordController,
-                    ),
-                    _buildOption(context),
-                    _buildSubmitButton(context),
-                    SizedBox(height: 12),
-                    _buildTermsAndConditions(context),
-                    SizedBox(height: 12),
-                  ],
-                ),
-              ),
-              _buildSignUpSection(context)
-            ],
-          ),
-
     );
   }
 
@@ -125,7 +132,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
+  Widget _buildSubmitButton(BuildContext context, LoginViewModel model) {
+    print("Is busy ${model.busy}");
     return Container(
       margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
       child: ButtonTheme(
@@ -138,26 +146,41 @@ class LoginScreen extends StatelessWidget {
             padding: EdgeInsets.all(18.0),
             primary: primaryColor,
           ),
-          onPressed:() {
-                  _onSubmit(context);
+          onPressed: model.busy
+              ? null
+              : () {
+                  _onSubmit(context, model);
                 },
-          child:  Text("Submit"),
+          child: model.busy ? CircularProgressIndicator() : Text("Submit"),
         ),
       ),
     );
   }
 
-  Future _onSubmit(BuildContext context) async {
-    final api = AuthApi();
+  Future _onSubmit(BuildContext context, LoginViewModel model) async {
+    bool validate = validateData(context);
+    if (!validate) return;
     final response =
-        await api.login(_emailController.text, _passwordController.text);
+        await model.login(_emailController.text, _passwordController.text);
     if (response.status) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return DashboardScreen();
-      }));
+      Navigator.of(context).pushReplacementNamed(RoutePaths.DASHBOARD);
     } else {
       showSnackBar(context, response.message!);
     }
+  }
+
+  bool validateData(BuildContext context) {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    if (!email.contains("@") || !email.contains(".")) {
+      showSnackBar(context, "Invalid email address");
+      return false;
+    }
+    if (password.length < 4) {
+      showSnackBar(context, "Password must be at least 4 characters long");
+      return false;
+    }
+    return true;
   }
 
   Widget _buildSignUpSection(BuildContext context) {
@@ -172,15 +195,8 @@ class LoginScreen extends StatelessWidget {
           children: [
             Text("Don't have an account?"),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) {
-                      return SignUpScreen();
-                    },
-                  ),
-                );
-              },
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(RoutePaths.REGISTER),
               child: Text("Sign up"),
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(

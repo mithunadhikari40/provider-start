@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>todo</string>
+	<string>Places</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,6 +28,10 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Place needs to access your location in order to show places near you.</string>
 
+    <key>NSCameraUsageDescription</key>
+	<string>Place needs access to camera to pick images to update profile</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Place needs access to gallery to pick images to update profile</string>
 
 
 

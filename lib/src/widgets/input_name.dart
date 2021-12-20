@@ -5,8 +5,19 @@ import 'package:places/src/widgets/shared/app_colors.dart';
 
 class InputName extends StatelessWidget {
   final TextEditingController controller;
+  final String? text;
+  final String? hint;
+  final IconData? icon;
+  final int? lines;
 
-  const InputName({Key? key, required this.controller}) : super(key: key);
+  const InputName({
+    Key? key,
+    required this.controller,
+    this.text = "Your Name",
+    this.hint = "Bishnu Shrestha",
+    this.icon = Icons.person,
+    this.lines = 1,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +29,15 @@ class InputName extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(bottom: 12.0),
               child: Text(
-                "Your name",
+                text!,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
             ),
             TextField(
               controller: controller,
+              maxLines: lines,
+              minLines: lines,
               keyboardType: TextInputType.name,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
@@ -33,7 +46,7 @@ class InputName extends StatelessWidget {
                     width: Math.min(MediaQuery.of(context).size.width / 6, 40),
                     decoration: BoxDecoration(
                         border: Border(right: BorderSide(color: greyColor))),
-                    child: Icon(Icons.person),
+                    child: Icon(icon),
                     padding: EdgeInsets.all(8),
                     alignment: Alignment.center),
                 border: OutlineInputBorder(
@@ -42,7 +55,7 @@ class InputName extends StatelessWidget {
                     const Radius.circular(4.0),
                   ),
                 ),
-                hintText: "Ram Kumar Shrestha",
+                hintText: hint,
               ),
             ),
           ],
