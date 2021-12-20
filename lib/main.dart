@@ -14,6 +14,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
   bool? isDark = await locator<CacheProvider>().getBoolValue(THEME_KEY);
+  locator<RxDataService>().addTheme(isDark ?? false);
   runApp(App(isDark));
 }
 
@@ -32,9 +33,12 @@ class App extends StatelessWidget {
         builder: (context, AsyncSnapshot<bool> snapshot) {
           return MaterialApp(
             title: "Places",
+
             themeMode: snapshot.hasData && snapshot.data!
                 ? ThemeMode.dark
                 : ThemeMode.light,
+            // color:
+            //     snapshot.hasData && snapshot.data! ? blackColor87 : whiteColor,
             theme: ThemeData(
               appBarTheme: AppBarTheme(
                 backgroundColor: whiteColor,
@@ -43,6 +47,8 @@ class App extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
+                actionsIconTheme: IconThemeData(color: blackColor87),
+                iconTheme: IconThemeData(color: blackColor87),
               ),
               bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 selectedItemColor: blackColor87,
@@ -92,6 +98,8 @@ class App extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
+                actionsIconTheme: IconThemeData(color: whiteColor),
+                iconTheme: IconThemeData(color: whiteColor),
               ),
               elevatedButtonTheme: ElevatedButtonThemeData(
                   style: ElevatedButton.styleFrom(

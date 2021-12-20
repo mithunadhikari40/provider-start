@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:places/src/core/locator/service_locator.dart';
 import 'package:places/src/model/dashboard/place_model.dart';
+import 'package:places/src/services/rx_data_service.dart';
 import 'package:places/src/utils/image_helper.dart';
 import 'package:places/src/utils/location_helper.dart';
 import 'package:places/src/widgets/dashboard/favorite_section.dart';
 import 'package:places/src/widgets/map_view.dart';
+import 'package:places/src/widgets/shared/app_colors.dart';
 
 class PlaceDetailView extends StatelessWidget {
   final PlaceModel place;
@@ -107,7 +110,13 @@ class PlaceDetailView extends StatelessWidget {
               ),
             ),
             collapseMode: CollapseMode.pin,
-            title: Text("${place.name}"),
+            title: Text(
+              "${place.name}",
+              style: TextStyle(
+                  color: locator<RxDataService>().currentTheme == true
+                      ? whiteColor
+                      : blackColor87),
+            ),
           ),
           Positioned(
             child: FavoriteSection(placeId: place.sId!),

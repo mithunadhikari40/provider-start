@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:places/src/widgets/shared/app_colors.dart';
 
 class MapView extends StatefulWidget {
   final bool readOnly;
@@ -59,20 +58,20 @@ class _MapViewState extends State<MapView> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: whiteColor,
       title: Text(
         widget.readOnly ? "View on Map" : "Choose from Map",
-        style: TextStyle(color: blackColor87),
       ),
       // textTheme: TextTheme(headline6: TextStyle(color: blackColor87,fontSize: 18)),
-      iconTheme: IconThemeData(color: blackColor87),
       actions: [
-        IconButton(onPressed: (){
-          if(widget.onLocationSelected != null){
-            widget.onLocationSelected!(_currentLocation);
-            Navigator.of(context).pop();
-          }
-        }, icon: Icon(Icons.check_circle),color: blackColor87,)
+        IconButton(
+          onPressed: () {
+            if (widget.onLocationSelected != null) {
+              widget.onLocationSelected!(_currentLocation);
+              Navigator.of(context).pop();
+            }
+          },
+          icon: Icon(Icons.check_circle),
+        )
       ],
     );
   }
